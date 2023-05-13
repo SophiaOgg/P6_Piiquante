@@ -1,16 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+const helmet = require('helmet');
+const path = require('path');
 
 // Les routes
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
-const Sauce = require('./models/sauce');
+// const Sauce = require('./models/sauce');
 
-const path = require('path');
 
-mongoose.connect('mongodb+srv://sophia45:saucepiiquante@cluster0.dpm0pif.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${ process.env.LOGIN }:${ process.env.PASSWORD }@${ process.env.CLUSTER }/${ process.env.DATABASE }?retryWrites=true&w=majority`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -27,5 +28,6 @@ app.use(express.json());
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(helmet({crossOriginResourcePolicy: { policy: "same-site"}}));
 
 module.exports = app;
